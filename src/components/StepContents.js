@@ -5,15 +5,11 @@ import {bindActionCreators} from 'redux';
 import {
     FaChevronCircleDown,
     FaAngleRight,
-    FaStar,
+    FaAngleDown
 } from 'react-icons/fa';
-import {
-    FiStar
-} from 'react-icons/fi';
-
-import Rating from 'react-rating';
 
 import * as baseActions from '../modules/base';
+import ReviewWriteContents from './ReviewWriteContents';
 
 const ContentBtn = styled.div`
     width: 100%;
@@ -49,6 +45,12 @@ const ContentList = styled.div`
         border-top: 1px solid #bbb;
         border-bottom: 1px solid #bbb;
         line-height: 50px;
+        cursor: pointer;
+        
+         &.active{
+             background-color: #ffa409;
+             color: #fff;
+         }
     }
 
     .icon-arrow {
@@ -122,10 +124,12 @@ class StepContents extends Component {
         super(props);
 
         this.state = {
-            active: ''
+            active: '',
+            listActive: ''
         }
     }
 
+    /*step1 클릭 이벤트*/
     handleClick = (e) => {
 
         const {BaseActions} = this.props;
@@ -146,16 +150,33 @@ class StepContents extends Component {
         }
     }
 
+    /*step2 클릭 이벤트*/
+    handleListClick = (e) => {
+        const clicked = e.target.id;
+
+        if (this.state.listActive === clicked) {
+            this.setState({listActive: ''});
+        } else {
+            this.setState({listActive: clicked});
+        }
+    }
+
+
     render() {
         const {step} = this.props;
         return (
             <div id="contents">
-                {step === 1
-                    ? <StepOneContents
-                        handleClick={this.handleClick}
-                        active={this.state.active}
-                    />
-                    : <StepTwoContents/>}
+                {
+                    step === 1
+                        ? <StepOneContents
+                            handleClick={this.handleClick}
+                            active={this.state.active}
+                        />
+                        : <StepTwoContents
+                            handleListClick={this.handleListClick}
+                            active={this.state.listActive}
+                        />
+                }
             </div>
         )
     }
@@ -172,65 +193,49 @@ const StepOneContents = ({handleClick, active}) => (
     </ContentBtn>
 )
 
-const StepTwoContents = () => (
+const StepTwoContents = ({handleListClick, active}) => (
     <ContentList>
         <ul>
             <li>
-                <div className="step2-list-title">
+                <div className={`step2-list-title ${active === "traffic" ? 'active' : ''}`} id="traffic"
+                     onClick={handleListClick}>
                     <Icons>
                         <FaChevronCircleDown size={25}/>
                     </Icons>
-                    <span>교통여건</span>
+                    교통여건
                     <span className="icon-arrow">
                         <IconRight>
-                        <FaAngleRight size={30}/>
+                            { active ==="traffic" ?  <FaAngleDown size={30}/>: <FaAngleRight size={30}/> }
                         </IconRight>
                     </span>
                 </div>
-                <div id="step2-list-contents">
-                    <p className="title-section">
-                        대중교통 이용이나, 자동차 운행과 같은 교통여건에 대해 평가해주세요. (50자 이상)
-                    </p>
-                    <div className="stars-section">
-                        <span className="stars-text">매우불편</span>
-                        <span>
-                            <Rating
-                                emptySymbol={<FiStar color={"#ffa409"} size={35}/>}
-                                fullSymbol={<FaStar color={"#ffa409"} size={35}/>}
-                            />
-                        </span>
-                        <span className="stars-text">매우편리</span>
-                    </div>
-                    <p className="example-section">
-                        (예시) 삼각지역이 도보 3분 거리이고, 종각으로 가는 501버스를 집 바로 앞 버스정류장에서 탈 수 있다.
-                        배차 간격이 짧아 출퇴근이 편리하다. 하지만 서울역이 근처에 있어서 차가 항상 막혀, 자가용 이용은 자제하려고 한다.
-                    </p>
-                    <div className="write-section">
-                        <textarea placeholder="교통 여건의 장단점을 입력해주세요"></textarea>
-                    </div>
-                </div>
+
+                {active === "traffic" && <ReviewWriteContents section={"traffic"}/>}
             </li>
             <li>
-                <div className="step2-list-title">
+                <div className={`step2-list-title ${active === "environment" ? 'active' : ''}`} id="environment"
+                     onClick={handleListClick}>
                     <Icons>
                         <FaChevronCircleDown/>
                     </Icons>
-                    <span>주변환경</span>
+                    주변환경
                     <span className="icon-arrow">
                         <FaAngleRight/>
                     </span>
                 </div>
             </li>
             <li>
-                <div className="step2-list-title">
+                <div className={`step2-list-title ${active === "danjis" ? 'active' : ''}`} id="danjis"
+                     onClick={handleListClick}>
                     <Icons>
                         <FaChevronCircleDown/>
                     </Icons>
-                    <span>단지관리</span>
+                    동/층 정보
                     <span className="icon-arrow">
                         <FaAngleRight/>
                     </span>
                 </div>
+                {active === "danjis" && <ReviewWriteContents section={"danjis"}/>}
             </li>
         </ul>
     </ContentList>
