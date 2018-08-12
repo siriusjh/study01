@@ -1,5 +1,19 @@
-import React from 'react';
+import React, {Component} from 'react';
 import styled from 'styled-components';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {
+    FaChevronCircleDown,
+    FaAngleRight,
+    FaStar,
+} from 'react-icons/fa';
+import {
+    FiStar
+} from 'react-icons/fi';
+
+import Rating from 'react-rating';
+
+import * as baseActions from '../modules/base';
 
 const ContentBtn = styled.div`
     width: 100%;
@@ -10,8 +24,13 @@ const ContentBtn = styled.div`
     .btn {
         width: 48.5%;
         height: 40px;
+        
+         &.active{
+             background-color: #ffa409;
+         }
     }
 `;
+
 
 const ContentList = styled.div`
      display: flex;
@@ -83,13 +102,73 @@ const ContentList = styled.div`
         box-sizing: border-box;
         font-size: 14px;
     }
-
 `;
 
-const StepOneContents = () => (
+const Icons = styled.div`
+    display: inline-block;
+    position: relative;
+    top: 6px;
+    margin-right: 20px;
+`;
+
+const IconRight = styled.div`
+    display: inline-block;
+    position: relative;
+    top: 6px;
+`;
+
+class StepContents extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            active: ''
+        }
+    }
+
+    handleClick = (e) => {
+
+        const {BaseActions} = this.props;
+        const clicked = e.target.id;
+
+        if (clicked === 'first') {
+            alert("브라우저를 종료합니다.");
+            window.open('about:blank', '_self').close();
+        } else {
+            BaseActions.finishedStepOne(true);
+        }
+
+        if (this.state.active === clicked) {
+            this.setState({active: ''});
+            BaseActions.finishedStepOne(false);
+        } else {
+            this.setState({active: clicked});
+        }
+    }
+
+    render() {
+        const {step} = this.props;
+        return (
+            <div id="contents">
+                {step === 1
+                    ? <StepOneContents
+                        handleClick={this.handleClick}
+                        active={this.state.active}
+                    />
+                    : <StepTwoContents/>}
+            </div>
+        )
+    }
+}
+
+const StepOneContents = ({handleClick, active}) => (
     <ContentBtn>
-        <button type="button" className="btn">아니오</button>
-        <button type="button" className="btn">네</button>
+        <button type="button" className={`btn ${active === "first" ? 'active' : ''}`} id="first"
+                onClick={handleClick}>아니오
+        </button>
+        <button type="button" className={`btn ${active === "second" ? 'active' : ''}`} id="second"
+                onClick={handleClick}>네
+        </button>
     </ContentBtn>
 )
 
@@ -98,8 +177,15 @@ const StepTwoContents = () => (
         <ul>
             <li>
                 <div className="step2-list-title">
+                    <Icons>
+                        <FaChevronCircleDown size={25}/>
+                    </Icons>
                     <span>교통여건</span>
-                    <span className="icon-arrow">123</span>
+                    <span className="icon-arrow">
+                        <IconRight>
+                        <FaAngleRight size={30}/>
+                        </IconRight>
+                    </span>
                 </div>
                 <div id="step2-list-contents">
                     <p className="title-section">
@@ -107,7 +193,12 @@ const StepTwoContents = () => (
                     </p>
                     <div className="stars-section">
                         <span className="stars-text">매우불편</span>
-                        <span>stars</span>
+                        <span>
+                            <Rating
+                                emptySymbol={<FiStar color={"#ffa409"} size={35}/>}
+                                fullSymbol={<FaStar color={"#ffa409"} size={35}/>}
+                            />
+                        </span>
                         <span className="stars-text">매우편리</span>
                     </div>
                     <p className="example-section">
@@ -121,24 +212,37 @@ const StepTwoContents = () => (
             </li>
             <li>
                 <div className="step2-list-title">
+                    <Icons>
+                        <FaChevronCircleDown/>
+                    </Icons>
                     <span>주변환경</span>
-                    <span className="icon-arrow">123</span>
+                    <span className="icon-arrow">
+                        <FaAngleRight/>
+                    </span>
                 </div>
             </li>
             <li>
                 <div className="step2-list-title">
+                    <Icons>
+                        <FaChevronCircleDown/>
+                    </Icons>
                     <span>단지관리</span>
-                    <span className="icon-arrow">123</span>
+                    <span className="icon-arrow">
+                        <FaAngleRight/>
+                    </span>
                 </div>
             </li>
         </ul>
     </ContentList>
 )
 
-const StepContents = ({step}) => (
-    <div id="contents">
-        {step === 1 ? <StepOneContents/> : <StepTwoContents/>}
-    </div>
-)
-
-export default StepContents;
+export default connect(
+    (state) => ({
+        step: state.base.get('step'),
+        stepOneFinished: state.base.get('stepOneFinished'),
+        stepTwoFinished: state.base.get('stepTwoFinished')
+    }),
+    (dispatch) => ({
+        BaseActions: bindActionCreators(baseActions, dispatch)
+    })
+)(StepContents);

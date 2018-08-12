@@ -5,7 +5,7 @@ import StepContents from "./StepContents";
 const ReviewWrite = ({step}) => (
     <div>
         <StepTitle step={step}/>
-        <StepContents step={step}/>
+        <StepContents/>
     </div>
 )
 

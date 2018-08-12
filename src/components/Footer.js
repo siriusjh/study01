@@ -5,7 +5,7 @@ import {
 } from 'react-icons/fa';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { bindActionCreators }from 'redux';
+import { bindActionCreators } from 'redux';
 
 import * as baseActions from '../modules/base';
 
@@ -27,7 +27,7 @@ class  Footer extends Component {
 
     handleStepChange = (changeStep) => {
 
-        const { step, BaseActions } = this.props;
+        const { step, stepOneFinished, stepTwoFinished, BaseActions } = this.props;
 
         let total = changeStep + step;
         if (total < 2) {
@@ -36,7 +36,28 @@ class  Footer extends Component {
             total = 4
         }
 
-        BaseActions.changeSteps(total);
+        switch (total) {
+            case 1:
+                BaseActions.changeSteps(total);
+                break;
+            case 2:
+                if(stepOneFinished) {
+                    BaseActions.changeSteps(total);
+                }
+                break;
+            case 3:
+                if(stepTwoFinished) {
+                    BaseActions.changeSteps(total);
+                }
+                break;
+            case 4:
+
+                break;
+            default:
+
+                break;
+        }
+
     }
 
     render() {
@@ -63,7 +84,9 @@ class  Footer extends Component {
 }
 export default connect(
     (state) => ({
-        step: state.base.get('step')
+        step: state.base.get('step'),
+        stepOneFinished: state.base.get('stepOneFinished'),
+        stepTwoFinished: state.base.get('stepTwoFinished')
     }),
     (dispatch) => ({
         BaseActions: bindActionCreators(baseActions, dispatch)
