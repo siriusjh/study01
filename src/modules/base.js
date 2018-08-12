@@ -10,5 +10,5 @@ const initialState = Map({
 })
 
 export default handleActions({
-    [CHANE_STEPS] : (state, action) => state.get('step', action.payload)
+    [CHANE_STEPS] : (state, action) => state.set('step', action.payload)
 }, initialState)
