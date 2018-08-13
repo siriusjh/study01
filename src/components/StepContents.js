@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
     FaChevronCircleDown,
     FaAngleRight,
@@ -79,6 +79,11 @@ const ContentList = styled.div`
     .stars-section .stars-text {
        display: inline-block;
        width: 40px;
+       padding-top: 13px;
+    }
+    
+    .stars-rating {
+       padding-top: 15px;
     }
 
     .example-section {
@@ -103,6 +108,20 @@ const ContentList = styled.div`
         border-radius: 5px;
         box-sizing: border-box;
         font-size: 14px;
+    }
+    
+    .danjis-select {
+        display: flex;
+        justify-content: space-around;
+        
+    }
+    
+    .danjis-select select{
+        height: 45px;
+        width: 45%;
+        border: 1px solid silver;
+        font-size: 15px;
+        box-sizing: border-box;
     }
 `;
 
@@ -163,7 +182,8 @@ class StepContents extends Component {
 
 
     render() {
-        const {step} = this.props;
+        const {step, trafficFinished} = this.props;
+
         return (
             <div id="contents">
                 {
@@ -175,6 +195,7 @@ class StepContents extends Component {
                         : <StepTwoContents
                             handleListClick={this.handleListClick}
                             active={this.state.listActive}
+                            trafficFinished={trafficFinished}
                         />
                 }
             </div>
@@ -193,46 +214,53 @@ const StepOneContents = ({handleClick, active}) => (
     </ContentBtn>
 )
 
-const StepTwoContents = ({handleListClick, active}) => (
+const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
     <ContentList>
         <ul>
             <li>
                 <div className={`step2-list-title ${active === "traffic" ? 'active' : ''}`} id="traffic"
                      onClick={handleListClick}>
                     <Icons>
-                        <FaChevronCircleDown size={25}/>
+                        {
+                            active !== "traffic" &&
+                            trafficFinished ? <FaChevronCircleDown color={"#ffa409"} size={25}/> : <FaChevronCircleDown size={25}/>
+                        }
                     </Icons>
                     교통여건
                     <span className="icon-arrow">
                         <IconRight>
-                            { active ==="traffic" ?  <FaAngleDown size={30}/>: <FaAngleRight size={30}/> }
+                            {active === "traffic" ? <FaAngleDown size={30}/> : <FaAngleRight size={30}/>}
                         </IconRight>
                     </span>
                 </div>
-
                 {active === "traffic" && <ReviewWriteContents section={"traffic"}/>}
             </li>
             <li>
                 <div className={`step2-list-title ${active === "environment" ? 'active' : ''}`} id="environment"
                      onClick={handleListClick}>
                     <Icons>
-                        <FaChevronCircleDown/>
+                        <FaChevronCircleDown size={25}/>
                     </Icons>
                     주변환경
                     <span className="icon-arrow">
-                        <FaAngleRight/>
+                         <IconRight>
+                             {active === "environment" ? <FaAngleDown size={30}/> : <FaAngleRight size={30}/>}
+                         </IconRight>
                     </span>
                 </div>
+                {active === "environment" && <div>environment</div>}
             </li>
             <li>
                 <div className={`step2-list-title ${active === "danjis" ? 'active' : ''}`} id="danjis"
                      onClick={handleListClick}>
                     <Icons>
-                        <FaChevronCircleDown/>
+                        <FaChevronCircleDown size={25}/>
                     </Icons>
                     동/층 정보
                     <span className="icon-arrow">
-                        <FaAngleRight/>
+                          <IconRight>
+                              {active === "danjis" ? <FaAngleDown size={30}/> : <FaAngleRight size={30}/>}
+                          </IconRight>
                     </span>
                 </div>
                 {active === "danjis" && <ReviewWriteContents section={"danjis"}/>}
@@ -245,7 +273,8 @@ export default connect(
     (state) => ({
         step: state.base.get('step'),
         stepOneFinished: state.base.get('stepOneFinished'),
-        stepTwoFinished: state.base.get('stepTwoFinished')
+        stepTwoFinished: state.base.get('stepTwoFinished'),
+        trafficFinished: state.review.get('trafficFinished')
     }),
     (dispatch) => ({
         BaseActions: bindActionCreators(baseActions, dispatch)
