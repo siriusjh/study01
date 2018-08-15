@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {
     FaCircle
 } from 'react-icons/fa';
@@ -23,14 +23,10 @@ const Icons = styled.div`
 `;
 
 class Header extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
-
         const {step} = this.props;
-        console.log("step" + step);
+
         return (
             <Wrapper>
                 <header>
@@ -63,10 +59,12 @@ class Header extends Component {
     }
 }
 
+Header.propTypes = {
+    step: PropTypes.number
+}
 
 export default connect(
     (state) => ({
         step: state.base.get('step')
     })
 )(Header);
-

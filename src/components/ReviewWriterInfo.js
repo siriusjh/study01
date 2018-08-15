@@ -73,11 +73,9 @@ class ReviewWriterInfo extends Component {
 
         if (this.state.typeActive === clicked) {
             this.setState({typeActive: ''});
-            ReviewActions.changeResidenceType(false);
             ReviewActions.updateResidenceType('');
         } else {
             this.setState({typeActive: clicked});
-            ReviewActions.changeResidenceType(true);
             ReviewActions.updateResidenceType(value);
         }
     }
@@ -89,11 +87,9 @@ class ReviewWriterInfo extends Component {
 
         if (this.state.yearActive === clicked) {
             this.setState({yearActive: ''});
-            ReviewActions.changeResidenceYear(false);
             ReviewActions.updateResidenceYear('');
         } else {
             this.setState({yearActive: clicked});
-            ReviewActions.changeResidenceYear(true);
             ReviewActions.updateResidenceYear(value);
         }
     }
@@ -105,11 +101,9 @@ class ReviewWriterInfo extends Component {
 
         if (this.state.ageActive === clicked) {
             this.setState({ageActive: ''});
-            ReviewActions.changeAge(false);
             ReviewActions.updateAge('');
         } else {
             this.setState({ageActive: clicked});
-            ReviewActions.changeAge(true);
             ReviewActions.updateAge(value);
         }
     }
@@ -121,11 +115,9 @@ class ReviewWriterInfo extends Component {
 
         if (this.state.genderActive === clicked) {
             this.setState({genderActive: ''});
-            ReviewActions.changeGender(false);
             ReviewActions.updateGender('');
         } else {
             this.setState({genderActive: clicked});
-            ReviewActions.changeGender(true);
             ReviewActions.updateGender(value);
         }
     }
@@ -137,17 +129,14 @@ class ReviewWriterInfo extends Component {
 
         if (this.state.active === clicked) {
             this.setState({active: ''});
-            ReviewActions.changeMarried(false);
             ReviewActions.updateMarried('');
         } else {
             this.setState({active: clicked});
-            ReviewActions.changeMarried(true);
             ReviewActions.updateMarried(value);
         }
     }
 
     render() {
-
         let typeActive = this.state.typeActive;
         let yearActive = this.state.yearActive;
         let ageActive = this.state.ageActive;

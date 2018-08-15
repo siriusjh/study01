@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {
     FaChevronCircleDown,
     FaAngleRight,
@@ -9,6 +10,7 @@ import {
 } from 'react-icons/fa';
 
 import * as baseActions from '../modules/base';
+import * as reviewActions from '../modules/review';
 import ReviewWriteContents from './ReviewWriteContents';
 
 const ContentBtn = styled.div`
@@ -123,6 +125,14 @@ const ContentList = styled.div`
         font-size: 15px;
         box-sizing: border-box;
     }
+    
+      .danjis-select input{
+        height: 45px;
+        width: 45%;
+        border: 1px solid silver;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
 `;
 
 const Icons = styled.div`
@@ -182,7 +192,7 @@ class StepContents extends Component {
 
 
     render() {
-        const {step, trafficFinished} = this.props;
+        const {step, trafficFinished, environmentFinished, danjiFinished} = this.props;
 
         return (
             <div id="contents">
@@ -196,11 +206,20 @@ class StepContents extends Component {
                             handleListClick={this.handleListClick}
                             active={this.state.listActive}
                             trafficFinished={trafficFinished}
+                            environmentFinished={environmentFinished}
+                            danjiFinished={danjiFinished}
                         />
                 }
             </div>
         )
     }
+}
+
+StepContents.propTypes = {
+    step: PropTypes.number,
+    trafficFinished: PropTypes.bool,
+    environmentFinished: PropTypes.bool,
+    danjiFinished: PropTypes.bool
 }
 
 const StepOneContents = ({handleClick, active}) => (
@@ -214,7 +233,12 @@ const StepOneContents = ({handleClick, active}) => (
     </ContentBtn>
 )
 
-const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
+StepOneContents.propTypes = {
+    handleClick: PropTypes.func,
+    active: PropTypes.string,
+}
+
+const StepTwoContents = ({handleListClick, active, trafficFinished, environmentFinished, danjiFinished}) => (
     <ContentList>
         <ul>
             <li>
@@ -223,7 +247,8 @@ const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
                     <Icons>
                         {
                             active !== "traffic" &&
-                            trafficFinished ? <FaChevronCircleDown color={"#ffa409"} size={25}/> : <FaChevronCircleDown size={25}/>
+                            trafficFinished ? <FaChevronCircleDown color={"#ffa409"} size={25}/> :
+                                <FaChevronCircleDown size={25}/>
                         }
                     </Icons>
                     교통여건
@@ -239,7 +264,11 @@ const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
                 <div className={`step2-list-title ${active === "environment" ? 'active' : ''}`} id="environment"
                      onClick={handleListClick}>
                     <Icons>
-                        <FaChevronCircleDown size={25}/>
+                        {
+                            active !== "environment" &&
+                            environmentFinished ? <FaChevronCircleDown color={"#ffa409"} size={25}/> :
+                                <FaChevronCircleDown size={25}/>
+                        }
                     </Icons>
                     주변환경
                     <span className="icon-arrow">
@@ -248,13 +277,17 @@ const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
                          </IconRight>
                     </span>
                 </div>
-                {active === "environment" && <div>environment</div>}
+                {active === "environment" && <ReviewWriteContents section={"environment"}/>}
             </li>
             <li>
                 <div className={`step2-list-title ${active === "danjis" ? 'active' : ''}`} id="danjis"
                      onClick={handleListClick}>
                     <Icons>
-                        <FaChevronCircleDown size={25}/>
+                        {
+                            active !== "danjis" &&
+                            danjiFinished ? <FaChevronCircleDown color={"#ffa409"} size={25}/> :
+                                <FaChevronCircleDown size={25}/>
+                        }
                     </Icons>
                     동/층 정보
                     <span className="icon-arrow">
@@ -269,14 +302,27 @@ const StepTwoContents = ({handleListClick, active, trafficFinished}) => (
     </ContentList>
 )
 
+
+StepTwoContents.propTypes = {
+    handleListClick: PropTypes.func,
+    active: PropTypes.string,
+    trafficFinished: PropTypes.bool,
+    environmentFinished: PropTypes.bool,
+    danjiFinished: PropTypes.bool
+}
+
+
 export default connect(
     (state) => ({
         step: state.base.get('step'),
         stepOneFinished: state.base.get('stepOneFinished'),
         stepTwoFinished: state.base.get('stepTwoFinished'),
-        trafficFinished: state.review.get('trafficFinished')
+        trafficFinished: state.review.get('trafficFinished'),
+        environmentFinished: state.review.get('environmentFinished'),
+        danjiFinished: state.review.get('danjiFinished')
     }),
     (dispatch) => ({
-        BaseActions: bindActionCreators(baseActions, dispatch)
+        BaseActions: bindActionCreators(baseActions, dispatch),
+        ReviewActions: bindActionCreators(reviewActions, dispatch)
     })
 )(StepContents);

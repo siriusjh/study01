@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { FaCircle } from 'react-icons/fa';
 import Rating from 'react-rating';
 import storage from '../lib/storage';
@@ -84,6 +84,8 @@ class ReviewResult extends Component {
 
         const trafficRating = storage.get('trafficRating');
         const trafficText = storage.get('trafficText');
+        const environmentRating = storage.get('environmentRating');
+        const environmentText = storage.get('environmentText');
         let imgAge = age.substring(0,2);
         let imgGender = '';
             if(gender ==='남자') {
@@ -96,7 +98,7 @@ class ReviewResult extends Component {
             <Wrapper>
                 <div id="step4-section">
                     <div className="writer">
-                        <img src={`http://s.zigbang.com/v2/danji/review_${imgGender}_${imgAge}.png`}/>
+                        <img src={`http://s.zigbang.com/v2/danji/review_${imgGender}_${imgAge}.png`} alt="사진"/>
                         <strong>{age} {gender}</strong>
                         <span><Moment format="YYYY.MM.DD">{date}</Moment> 등록</span>
                         <p className="writer-info">{residenceYear} · {residenceType} · {isMarried}</p>
@@ -119,10 +121,36 @@ class ReviewResult extends Component {
                             {trafficText}
                         </p>
                     </div>
+                    <div className="review">
+                        <div className="review-title">
+                            <strong>주변환경</strong>
+                            <strong>{environmentRating}.0</strong>
+                            <span className="stars">
+                                 <Rating
+                                     emptySymbol={<FaCircle color={"#e5e5e5"} size={10}/>}
+                                     fullSymbol={<FaCircle color={"#757575"} size={10}/>}
+                                     readonly={true}
+                                     quiet={true}
+                                     initialRating={environmentRating}
+                                 />
+                            </span>
+                        </div>
+                        <p className="review-contents">
+                            {environmentText}
+                        </p>
+                    </div>
                 </div>
             </Wrapper>
         )
     }
+}
+
+ReviewResult.propTypes = {
+    residenceType: PropTypes.string,
+    residenceYear: PropTypes.string,
+    age: PropTypes.string,
+    gender: PropTypes.string,
+    isMarried: PropTypes.string
 }
 
 export default connect(
@@ -132,6 +160,5 @@ export default connect(
         age: state.review.get('age'),
         gender: state.review.get('gender'),
         isMarried: state.review.get('isMarried')
-    }),
-    (dispatch) => ({})
+    })
 )(ReviewResult);
